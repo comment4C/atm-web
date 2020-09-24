@@ -32,7 +32,7 @@ public class CustomerService {
 
     public Customer findCustomer(int id) {
         try{
-            return repository.findById(id);
+            return repository.findById(id).get();
         }catch (EmptyResultDataAccessException e) {
             return null;
         }
