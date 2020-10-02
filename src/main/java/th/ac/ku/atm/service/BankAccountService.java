@@ -14,11 +14,15 @@ import java.util.List;
 
 @Service
 public class BankAccountService {
-    List<BankAccount> bankAccountList;
     private RestTemplate restTemplate;
 
     public BankAccountService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
+    }
+
+    public void openAccount(BankAccount bankAccount) {
+        String url = "http://localhost:8091/api/bankaccount";
+        restTemplate.postForObject(url, bankAccount, BankAccount.class);
     }
 
     public List<BankAccount> getCustomerBankAccount(int customerId) {
@@ -32,18 +36,14 @@ public class BankAccountService {
         return Arrays.asList(accounts);
     }
 
+    public List<BankAccount> getBankAccounts() {
+        String url = "http://localhost:8091/api/bankaccount";
 
-    @PostConstruct
-    public void postConstruct() {
-        this.bankAccountList = new ArrayList<>();
-    }
+        ResponseEntity<BankAccount[]> response =
+                restTemplate.getForEntity(url, BankAccount[].class);
 
-    public void createBankAccount(BankAccount bankAccount) {
-        bankAccountList.add(bankAccount);
-    }
-
-    public List<BankAccount> getBankAccountList() {
-        return new ArrayList<>(this.bankAccountList);
+        BankAccount[] accounts = response.getBody();
+        return Arrays.asList(accounts);
     }
 
     private String hash(String pin) {
